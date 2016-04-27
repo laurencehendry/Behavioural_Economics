@@ -1,0 +1,88 @@
+############################
+## Laurence Hendry
+## R version used: RStudio 0.99.892
+## Behavioural Economics with Prof. Traxler
+############################
+
+#NB.
+#naming convention for shapes file is PLZ99 for PLZ with 0 in front, PLZ99_N with no 0 in front, and PLTZORT99 provides city names
+
+#full firepower
+library(doParallel)
+cl <- makeCluster(4)
+registerDoParallel(cl)
+
+#Directory and taking correct columns from datasets
+try(setwd("/Users/laurencehendry/GoogleDrive/MPP Hertie/2nd Year/Behavioral Economics & Experimental Policy Analysis/Groupwork/plz"),silent=TRUE)
+sub <- read.csv("Untitled spreadsheet - Sheet1.csv")
+sub <- sub[c(1, 2, 3, 12, 20, 21)]
+
+#renaming
+names(sub)[1] <-'treatment.group'
+names(sub)[2] <-'unique.ID'
+names(sub)[3] <-'rent'
+names(sub)[4] <-'PLZ'
+names(sub)[5] <-'english.dummy'
+names(sub)[6] <-'languages.dummy'
+
+# Correcting PLZs
+#http://www.r-bloggers.com/paste-paste0-and-sprintf/ 
+sub$PLZ <- paste0("0",sub$PLZ)
+
+#loading german PLZ maps
+library(shapefiles)
+shapefile <- read.shapefile('post_pl')
+dbf <- read.dbf("post_pl.dbf")
+shx <- read.shx("post_pl.shx")
+
+#plot trial 1
+library(sp)
+library(RColorBrewer)
+col = rainbow(length(levels(sub$PLZ)))
+spplot(shapefile, "PLZ", col.regions=col, main="German Regions",
+       colorkey = FALSE, lwd=.4, col="white")
+
+#plot trial 2
+library(maptools)
+library(ggmap)
+area <- readShapePoly('post_pl')
+colors <- brewer.pal(9, "BuGn")
+#NOT WORKING
+mapImage <- get_map(location = "leipzig germany",
+                    color = "color",
+                    source = "osm",
+                    # maptype = "terrain",
+                    zoom = 6)
+#make the PLZ areas readable
+area.points <- fortify(area)
+#plot all together
+ggmap(mapImage) +
+  geom_polygon(aes(x = long,
+                   y = lat,
+                   group = group),
+               data = area.points,
+               color = colors[9],
+               fill = colors[6],
+               alpha = 0.5) +
+  labs(x = "Longitude",
+       y = "Latitude")
+
+#plot trial 3
+library(classInt)
+
+to.plot <- aggregate(sub$rent ~ sub$PLZ, FUN = mean)
+names(to.plot)[1] <-'PLZ'
+names(to.plot)[2] <-'rent'
+
+Leipzig_shapes <- area[area$PLZORT99 == "Leipzig",]
+colors <- brewer.pal(9, "YlOrRd")
+#brks <- classIntervals(to.plot$rent, n=400, style="quantile")
+plot(Leipzig_shapes,
+     col=Leipzig_shapes[Leipzig_shapes$PLZ99 = to.plot$PLZ])
+#       colors[findInterval(to.plot$rent,
+#                             brks,
+#                             all.inside=TRUE)])
+?classIntervals
+?findInterval
+
+#plot trial 4
