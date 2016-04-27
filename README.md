@@ -2,4 +2,4 @@
 For behavioural economics course at the Hertie School
 
 ##**Colour in the map...**
-![Alt text](Behavioural_Economics/Data/Screen Shot 2016-04-27 at 6.38.32 PM.png?raw=true "colour in map")
+![Screenshot](https://github.com/laurencehendry/Behavioural_Economics/blob/master/Data/Screen%20Shot%202016-04-27%20at%206.38.32%20PM.pn)
