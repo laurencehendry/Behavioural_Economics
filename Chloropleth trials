@@ -73,6 +73,16 @@ plot(Shapes[Shapes$PLZ99=="10243",]) # Don't forget the last comma
 
 ######### End Christopher Code
 
+####### Christopher Leaflet Map
+
+library(dplyr)
+library(leaflet)
+leaflet() %>% 
+  addTiles() %>% 
+  addPolygons(data = Shapes) # Which can also be colored if you want to
+
+######## End Christopher Leaflet Map
+
 #plot trial 1
 library(sp)
 library(RColorBrewer)
