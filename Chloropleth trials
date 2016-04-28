@@ -46,10 +46,11 @@ Shapes <- readOGR(dsn = ".", layer = "post_pl") # Load Kreise shapefile
 plot(Shapes)
 
 # Now let us put some color in it, based on some random generated numbers
-sub$random_number <- sample(1:10, size = 102, replace = TRUE)
-                            
-sub$classes <- cut(sub$rent, seq(min(sub$random_number), max(sub$random_number), by = 2), 
-                   right = FALSE,
+Shapes$random_number <- sample(1:10, size = 8270, replace = TRUE)
+
+Shapes$random_number_cut <- cut(Shapes$random_number, 
+                   seq(min(Shapes$random_number), max(Shapes$random_number), by = 2), 
+                   right = FALSE, 
                    labels = c("1-3", "3-5", "5-8", "9-10")) # Cut these into 5 categories
 
 labels <- c("1-3", "3-5", "5-8", "9-10")
@@ -59,7 +60,7 @@ library(RColorBrewer)
 colours <- brewer.pal(4,"Greys") # Pick color palette
 
 # Plot the shapefiles colored
-plot(Shapes,border = "darkgrey", col = colours[sub$classes])
+plot(Shapes,border = "darkgrey", col = colours[Shapes$random_number_cut])
 
 # Add legend
 legend("right", fill = colours, legend = labels, title = "Random numbers by PLZ", cex = 0.5)
